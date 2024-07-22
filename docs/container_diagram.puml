@@ -1,0 +1,30 @@
+@startuml container_diagram
+
+title "Container diagram for panel FAQ bot"
+footer Alex Kuhn | %date("yyyy-MM-dd")
+
+!include  https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+Person(user, "User", "interacts with the chatbot")
+
+System_Boundary(zoomcamp, "Zoomcamp Courses") {
+    Person_Ext(course_participant, "Course Participant", "takes Zoomcamp courses")
+    SystemDb_Ext(course_data, "Course FAQs", "FAQs to be used by the RAG App")
+}
+
+System_Boundary(faq_bot_app, "FAQ ChatBot") {
+    Container(panel_app, "Web App UI",  "Panel", "frontend for the FAQ bot")
+    ContainerDb(retriever, "Retrieval", "ElasticSearch", "Search engine for FAQ data")
+    Container(augment, "Augmentation", "python", "build custom prompt")
+    Container(generator, "Generation", "Ollama", "LLM for answer generation")
+}
+
+Rel(user, panel_app, "asks question")
+Rel(panel_app, retriever, "retrieves\nrelevant documents")
+Rel(retriever, augment, "contextualizes prompt")
+Rel(augment, generator, "submits prompt with context")
+Rel(generator, panel_app, "returns answer")
+Rel(course_participant, course_data, "Submits Q's & A's")
+Rel(course_data, retriever, "Provides domain knowledge")
+
+@enduml

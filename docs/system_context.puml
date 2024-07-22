@@ -1,0 +1,18 @@
+@startuml rag_system_context
+
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+Person(user, "User", "Interacts with the RAG App")
+System(ragApp, "Course Assistant Chatbot", "A RAG app that answers user's questions about Zoomcamp courses")
+System_Boundary(zoomcamp, "Zoomcamp Courses") {
+    Person_Ext(course_participant, "Course Participant", "takes Zoomcamp courses")
+    SystemDb_Ext(course_data, "Course FAQs", "FAQs to be used by the RAG App")
+}
+
+Rel(course_participant, course_data, "Submits Q's & A's")
+Rel(course_data, ragApp, "Provides domain knowledge")
+Rel(user, ragApp, "Asks questions")
+Rel(ragApp, user, "Responds based on course knowledge")
+
+
+@enduml

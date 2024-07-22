@@ -1,0 +1,50 @@
+@startuml faq_bot_class_diagram
+
+title "FAQ Bot Class Diagram"
+footer Alex Kuhn | %date("yyyy-MM-dd")
+
+package "Frontend" {
+    class PanelApp {
+        + servable()
+        + handle_user_input(user_input: str)
+        + display_result(result: str)
+    }
+}
+
+package "Backend" {
+    package "Data Storage" {
+        class Elasticsearch {
+            + index_data(data: dict)
+            + retrieve_data(query: str): dict
+        }
+    }
+
+    package "Augmentation" {
+        class DataAugmenter {
+            + build_prompt(data: dict): dict
+        }
+    }
+
+    package "Generation" {
+        class OllamaGenerator {
+            + generate_text(prompt: str): str
+        }
+    }
+
+    class RAGBackend {
+        - elasticsearch: Elasticsearch
+        - augmenter: DataAugmenter
+        - generator: OllamaGenerator
+        + get_augmented_data(query: str): dict
+        + generate_response(query: str): str
+    }
+
+    Elasticsearch --> RAGBackend : uses
+    DataAugmenter --> RAGBackend : uses
+    OllamaGenerator --> RAGBackend : uses
+}
+
+PanelApp --> RAGBackend : communicates with
+
+
+@enduml
