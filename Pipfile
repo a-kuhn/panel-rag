@@ -5,10 +5,15 @@ name = "pypi"
 
 [packages]
 panel = "*"
+openai = "*"
+elasticsearch = "*"
+python-dotenv = "*"
 
 [dev-packages]
 watchfiles = "*"
 pytest = "*"
+pytest-cov = "*"
+mock = "*"
 
 [requires]
 python_version = "3.9"
