@@ -21,8 +21,11 @@ def get_response(contents, user, instance):
 
 chat_bot = pn.chat.ChatInterface(
     callback=get_response,
+    callback_user="Zoomcamp TA",
+    callback_avatar="🚀",
     max_height=500,
-    user="student",
+    user="confused student",
+    user_avatar="🤓",
     show_undo=False,
 )
 chat_bot.send(
