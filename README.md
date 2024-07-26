@@ -31,6 +31,9 @@ To run the main application, execute the following command:
 ```sh
 panel serve src/app.py [--autoreload]
 ```
+_see Docker setup below for - ElasticSearch is required, ollama setup is optional_  
+_OpenAI API Key is required if using OpenAIResponseGenerator_  
+  
 ### Running Tests
 To run the tests, use:
 ```sh
@@ -45,10 +48,10 @@ bash run_elastic_search_w_volume.sh
 ```
 
 ## Project Modules
-`src/app.py`: Main application entry point
-`src/retrieve_docs.py`: Module for retrieving relevant documents from ElasticSearch
-`src/augment_prompt.py`: Module for contextualizing prompts w relevant FAQs
-`src/generate_response.py`: Module for generating responses (OpenAI or Ollama)  
+`src/app.py`: Main application entry point  
+`src/retrieve_docs.py`: Module for retrieving relevant documents from ElasticSearch  
+`src/augment_prompt.py`: Module for contextualizing prompts w relevant FAQs  
+`src/generate_response.py`: Module for generating responses (OpenAI or Ollama)    
   
 ## Documentation
 The project documentation, including class diagrams and system context, can be found in the docs directory.
