@@ -8,12 +8,14 @@ panel = "*"
 openai = "*"
 elasticsearch = "*"
 python-dotenv = "*"
+ollama = "*"
 
 [dev-packages]
 watchfiles = "*"
 pytest = "*"
 pytest-cov = "*"
 mock = "*"
+ipykernel = "*"
 
 [requires]
 python_version = "3.9"
