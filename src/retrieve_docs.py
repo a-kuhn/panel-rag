@@ -2,8 +2,11 @@ from elasticsearch import Elasticsearch
 
 
 def retrieve_docs(
-    query=None, index_name="faq_elasticsearch_data", max_results=5, filter=None
-):
+    query: str = None,
+    index_name: str = "faq_elasticsearch_data",
+    max_results: int = 5,
+    filter: dict = None,
+) -> tuple:
     es = Elasticsearch("http://localhost:9200")
 
     search_query = {"size": max_results, "query": {"bool": {"must": [], "filter": []}}}

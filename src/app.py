@@ -1,34 +1,35 @@
 import panel as pn
+import os
+from dotenv import load_dotenv
 from retrieve_docs import retrieve_docs
 from augment_prompt import build_prompt
-from generate_response import generate_openai_response
+from generate_response import OpenAIResponseGenerator, OllamaResponseGenerator
 
+load_dotenv()
 pn.extension()
+
+openai_api_key = os.getenv("OPENAI_API_KEY")
+openai_client = OpenAIResponseGenerator(api_key=openai_api_key)
+
+ollama_client = OllamaResponseGenerator()
 
 
 def get_response(contents, user, instance):
     docs, _ = retrieve_docs(contents)
     prompt = build_prompt(question=contents, context_docs=docs)
-    response = generate_openai_response(prompt)
-    print("\n********************************")
-    print(f"found docs from elasticsearch: {docs}\n\nand their scores: {_}")
-    print("\n********************************")
-    print(f"submitting prompt to openai: {prompt}")
-    print("\n********************************")
-    print(f"openai response: {response}")
-    return response
+    response = ollama_client.generate_response(prompt)
+    return pn.chat.ChatMessage(response, user="Zoomcamp TA", avatar="🚀")
 
 
-chat_bot = pn.chat.ChatInterface(
+chat_interface = pn.chat.ChatInterface(
     callback=get_response,
     callback_user="Zoomcamp TA",
-    callback_avatar="🚀",
     max_height=500,
     user="confused student",
-    user_avatar="🤓",
+    # user_avatar="🤓",
     show_undo=False,
 )
-chat_bot.send(
+chat_interface.send(
     "Ask me about the Zoomcamp courses", respond=False, user="Zoomcamp TA", avatar="🚀"
 )
-chat_bot.servable()
+chat_interface.servable()
