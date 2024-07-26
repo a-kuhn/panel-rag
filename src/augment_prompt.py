@@ -1,7 +1,7 @@
 def build_prompt(question: str, context_docs: list) -> str:
     context = build_context(context_docs)
     prompt = f"""
-You're a course teaching assistant. Answer the user QUESTION based on CONTEXT - the documents retrieved from our FAQ database. 
+You're a course teaching assistant. Answer the user QUESTION based on CONTEXT - the documents retrieved from our FAQ database.
 Only use the facts from the CONTEXT. If the CONTEXT doesn't contain the answer, return "NONE"
 
 QUESTION: {question}
