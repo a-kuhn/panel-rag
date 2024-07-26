@@ -1,4 +1,7 @@
-def build_prompt(question: str, context_docs: list[dict]) -> str:
+from typing import List, Dict
+
+
+def build_prompt(question: str, context_docs: List[Dict]) -> str:
     context = build_context(context_docs)
     prompt = f"""
 You're a course teaching assistant. Answer the user QUESTION based on CONTEXT - the documents retrieved from our FAQ database.
@@ -12,7 +15,7 @@ CONTEXT:
     return prompt
 
 
-def build_context(context_docs: list[dict]) -> str:
+def build_context(context_docs: List[Dict]) -> str:
     if not isinstance(context_docs, list):
         raise ValueError("context_docs should be a list.")
 
