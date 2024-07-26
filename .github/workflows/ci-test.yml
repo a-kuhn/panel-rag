@@ -27,7 +27,7 @@ jobs:
       
     - name: Run tests
       run: |
-        pipenv pytest --cov --cov-report=html
+        pipenv run pytest --cov --cov-report=html
 
     - name: Upload coverage report
       uses: actions/upload-artifact@v2
