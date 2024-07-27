@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 from openai import OpenAI
 from ollama import Client
-import asyncio
 
 
 class ResponseGenerator(ABC):
