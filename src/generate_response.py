@@ -15,7 +15,8 @@ class ResponseGenerator(ABC):
 class OllamaResponseGenerator(ResponseGenerator):
     def __init__(self, host_url: str = "http://localhost:11434", model: str = "phi3"):
         super().__init__(model)
-        self.client = Client(host=host_url)
+        self.host_url = host_url
+        self.client = Client(host=self.host_url)
 
     def generate_response(self, prompt: str) -> str:
         try:
@@ -37,7 +38,8 @@ class OllamaResponseGenerator(ResponseGenerator):
 class OpenAIResponseGenerator(ResponseGenerator):
     def __init__(self, api_key: str, model: str = "gpt-4o"):
         super().__init__(model)
-        self.client = OpenAI(api_key=api_key)
+        self.api_key = api_key
+        self.client = OpenAI(api_key=self.api_key)
 
     def generate_response(self, prompt: str) -> str:
         try:
