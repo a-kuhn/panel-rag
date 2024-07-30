@@ -51,7 +51,7 @@ def test_get_response(mock_generate_response, mock_build_prompt, mock_retrieve_d
 
     contents = "Test contents"
     user = "Test user"
-    instance = MagicMock()  # Mocking ChatInterface instance
+    instance = MagicMock()
     response = get_response(contents, user, instance)
 
     mock_retrieve_docs.assert_called_once_with(contents)
