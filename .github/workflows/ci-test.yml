@@ -26,6 +26,8 @@ jobs:
         pipenv install --dev
       
     - name: Run tests
+      env:
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       run: |
         pipenv run pytest --cov --cov-report=html
 
