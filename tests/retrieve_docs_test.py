@@ -1,105 +1,120 @@
-import unittest
-from unittest.mock import patch, Mock
+import pytest
+from unittest.mock import MagicMock
 from elasticsearch import Elasticsearch
 from src.retrieve_docs import (
-    retrieve_docs,
-    construct_search_query,
     get_elasticsearch_client,
+    construct_search_query,
+    retrieve_docs,
 )
 
 
-class TestRetrieveDocs(unittest.TestCase):
+def test_get_elasticsearch_client():
+    client = get_elasticsearch_client("http://testhost:9200")
+    assert isinstance(client, Elasticsearch)
 
-    @patch("src.retrieve_docs.get_elasticsearch_client")
-    def test_retrieve_docs(self, mock_get_client):
-        mock_es = Mock()
-        mock_get_client.return_value = mock_es
 
-        mock_response = {
-            "hits": {
-                "hits": [
-                    {
-                        "_source": {
-                            "question": "How to refund?",
-                            "text": "Refund details",
-                        },
-                        "_score": 1.0,
+@pytest.mark.parametrize(
+    "query, max_results, filter, expected",
+    [
+        (
+            "test query",
+            5,
+            {"status": "active"},
+            {
+                "size": 5,
+                "query": {
+                    "bool": {
+                        "must": [
+                            {
+                                "multi_match": {
+                                    "query": "test query",
+                                    "fields": ["question^4", "text"],
+                                    "type": "best_fields",
+                                }
+                            }
+                        ],
+                        "filter": [{"term": {"status.keyword": "active"}}],
+                    }
+                },
+            },
+        ),
+        (
+            None,
+            10,
+            None,
+            {
+                "size": 10,
+                "query": {
+                    "bool": {
+                        "must": [{"match_all": {}}],
+                        "filter": [],
+                    }
+                },
+            },
+        ),
+    ],
+)
+def test_construct_search_query(query, max_results, filter, expected):
+    assert construct_search_query(query, max_results, filter) == expected
+
+
+def test_retrieve_docs():
+    mock_client = MagicMock()
+    mock_response = {
+        "hits": {
+            "hits": [
+                {
+                    "_source": {
+                        "question": "What is pytest?",
+                        "answer": "A testing framework",
                     },
-                    {
-                        "_source": {
-                            "question": "How to reset password?",
-                            "text": "Reset password details",
-                        },
-                        "_score": 0.9,
+                    "_score": 1.0,
+                },
+                {
+                    "_source": {
+                        "question": "What is mock?",
+                        "answer": "A testing utility",
                     },
-                ]
-            }
+                    "_score": 0.8,
+                },
+            ]
         }
-        mock_es.search.return_value = mock_response
+    }
+    mock_client.search.return_value = mock_response
 
-        documents, scores = retrieve_docs(query="refund", es_client=mock_es)
+    docs, scores = retrieve_docs(
+        query="test query",
+        index_name="test_index",
+        max_results=5,
+        filter={"status": "active"},
+        es_client=mock_client,
+    )
 
-        expected_documents = [
-            {"question": "How to refund?", "text": "Refund details"},
-            {"question": "How to reset password?", "text": "Reset password details"},
-        ]
-        expected_scores = [1.0, 0.9]
+    expected_docs = [
+        {"question": "What is pytest?", "answer": "A testing framework"},
+        {"question": "What is mock?", "answer": "A testing utility"},
+    ]
+    expected_scores = [1.0, 0.8]
 
-        self.assertEqual(documents, expected_documents)
-        self.assertEqual(scores, expected_scores)
-
-    def test_construct_search_query_with_query(self):
-        query = "refund"
-        max_results = 5
-        filter = {"section": "Payments"}
-
-        expected_query = {
-            "size": max_results,
+    assert docs == expected_docs
+    assert scores == expected_scores
+    mock_client.search.assert_called_once_with(
+        index="test_index",
+        body={
+            "size": 5,
             "query": {
                 "bool": {
                     "must": [
                         {
                             "multi_match": {
-                                "query": query,
+                                "query": "test query",
                                 "fields": ["question^4", "text"],
                                 "type": "best_fields",
                             }
                         }
                     ],
-                    "filter": [{"term": {"section.keyword": "Payments"}}],
+                    "filter": [{"term": {"status.keyword": "active"}}],
                 }
             },
-        }
-
-        self.assertEqual(
-            construct_search_query(query, max_results, filter), expected_query
-        )
-
-    def test_construct_search_query_without_query(self):
-        query = None
-        max_results = 5
-        filter = {"section": "Payments"}
-
-        expected_query = {
-            "size": max_results,
-            "query": {
-                "bool": {
-                    "must": [{"match_all": {}}],
-                    "filter": [{"term": {"section.keyword": "Payments"}}],
-                }
-            },
-        }
-
-        self.assertEqual(
-            construct_search_query(query, max_results, filter), expected_query
-        )
-
-    @patch("src.retrieve_docs.Elasticsearch")
-    def test_get_elasticsearch_client(self, mock_es):
-        client = get_elasticsearch_client("http://example.com")
-        mock_es.assert_called_with("http://example.com")
-        self.assertEqual(client, mock_es.return_value)
-
-
-if __name__ == "__main__":
-    unittest.main()
+        },
+    )
