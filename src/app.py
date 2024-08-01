@@ -34,7 +34,7 @@ def get_response(
 ) -> pn.chat.ChatMessage:
     docs, _ = retrieve_docs(contents)
     prompt = build_prompt(question=contents, context_docs=docs)
-    response = ollama_client.generate_response(prompt)
+    response = openai_client.generate_response(prompt)
     return pn.chat.ChatMessage(object=response, user="Zoomcamp TA", avatar="🚀")
 
 
