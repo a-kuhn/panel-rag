@@ -19,6 +19,19 @@ services:
     ports:
       - "11434:11434"
 
+  panel-rag:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: panel-rag
+    environment:
+      - ELASTICSEARCH_HOST=http://elasticsearch:9200
+      - OLLAMA_HOST=http://ollama:11434
+    container_name: panel-rag
+    ports: 
+      - "5006:5006"
+
+
 volumes:
   faq_elasticsearch_data:
     external: true

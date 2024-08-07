@@ -2,8 +2,10 @@ from typing import List, Tuple, Dict, Optional
 from elasticsearch import Elasticsearch
 
 
-def get_elasticsearch_client(host: str = "http://localhost:9200") -> Elasticsearch:
-    return Elasticsearch(host)
+def get_elasticsearch_client(
+    host_url: str = "http://elasticsearch:9200",
+) -> Elasticsearch:
+    return Elasticsearch(host_url)
 
 
 def construct_search_query(

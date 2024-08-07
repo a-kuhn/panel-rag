@@ -50,3 +50,17 @@ class OpenAIResponseGenerator(ResponseGenerator):
         except Exception as e:
             print(f"Error generating OpenAI response: {e}")
             return "No response from OpenAI client"
+
+
+def get_ollama_client(
+    host_url: str = "http://localhost:11434", model: str = "phi3"
+) -> OllamaResponseGenerator:
+    return OllamaResponseGenerator(host_url=host_url, model=model)
+
+
+def get_openai_client(
+    api_key: str = None, model: str = "gpt-4o"
+) -> OpenAIResponseGenerator:
+    if not api_key:
+        raise ValueError("OPENAI_API_KEY not found in environment variables")
+    return OpenAIResponseGenerator(api_key=api_key, model=model)
