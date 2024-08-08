@@ -1,5 +1,5 @@
 import pytest
-from src.augment_prompt import build_prompt, build_context
+from src.augment import build_prompt, build_context
 
 
 def compare_lines(expected, actual):
