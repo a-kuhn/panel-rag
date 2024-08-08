@@ -1,7 +1,7 @@
 import pytest
 from unittest.mock import MagicMock
 from elasticsearch import Elasticsearch
-from src.retrieve_docs import (
+from src.retrieve import (
     get_elasticsearch_client,
     construct_search_query,
     retrieve_docs,
