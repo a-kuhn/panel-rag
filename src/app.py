@@ -5,9 +5,6 @@ from retrieve import get_elasticsearch_client, retrieve_docs
 from augment import build_prompt
 from generate import get_ollama_client, get_openai_client
 
-import logging
-
-logging.basicConfig(level=logging.INFO)
 
 load_dotenv()
 pn.extension()
