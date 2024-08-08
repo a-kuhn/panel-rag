@@ -1,9 +1,34 @@
 import pytest
 from unittest.mock import MagicMock, patch
-from src.generate_response import OllamaResponseGenerator, OpenAIResponseGenerator
+from src.generate import (
+    OllamaResponseGenerator,
+    OpenAIResponseGenerator,
+    get_ollama_client,
+    get_openai_client,
+)
 
 
-@patch("src.generate_response.Client")
+def test_get_ollama_client():
+    client = get_ollama_client()
+    assert client.host_url == "http://localhost:11434"
+    assert client.model == "phi3"
+
+
+def test_get_openai_client_no_api_key():
+    with pytest.raises(
+        ValueError, match="OPENAI_API_KEY not found in environment variables"
+    ):
+        get_openai_client()
+
+
+def test_get_openai_client_with_api_key():
+    api_key = "test_api_key"
+    client = get_openai_client(api_key=api_key)
+    assert client.api_key == api_key
+    assert client.model == "gpt-4o"
+
+
+@patch("src.generate.Client")
 def test_ollama_response_generator(mock_client_class):
     mock_client = MagicMock()
     mock_client_class.return_value = mock_client
@@ -20,7 +45,7 @@ def test_ollama_response_generator(mock_client_class):
     )
 
 
-@patch("src.generate_response.Client")
+@patch("src.generate.Client")
 def test_ollama_response_generator_exception(mock_client_class):
     mock_client = MagicMock()
     mock_client_class.return_value = mock_client
@@ -33,7 +58,7 @@ def test_ollama_response_generator_exception(mock_client_class):
     assert response == "No response from Ollama client"
 
 
-@patch("src.generate_response.OpenAI")
+@patch("src.generate.OpenAI")
 def test_openai_response_generator(mock_openai_class):
     mock_openai_client = MagicMock()
     mock_openai_class.return_value = mock_openai_client
@@ -51,7 +76,7 @@ def test_openai_response_generator(mock_openai_class):
     )
 
 
-@patch("src.generate_response.OpenAI")
+@patch("src.generate.OpenAI")
 def test_openai_response_generator_exception(mock_openai_class):
     mock_openai_client = MagicMock()
     mock_openai_class.return_value = mock_openai_client
